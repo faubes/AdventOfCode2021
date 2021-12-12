@@ -1,0 +1,155 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "AdventOfCode2021",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "AdventOfCode2021",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "Day1",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Day1",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "Day2",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Day2",
+					"targetIndexes" : 
+					[
+						3,
+						4
+					]
+				},
+				{
+					"build" : "Day3",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Day3",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					],
+					"name" : "AdventOfCode2021",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "AdventOfCode2021::@5ad6a55fa77b6e6d25ae",
+					"jsonFile" : "target-AdventOfCode2021-Debug-931b867baef5e83086c5.json",
+					"name" : "AdventOfCode2021",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "BinaryDiagnostic::@ce17d9054d23055e71a7",
+					"jsonFile" : "target-BinaryDiagnostic-Debug-68801957b1e8814fe20a.json",
+					"name" : "BinaryDiagnostic",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "SonarSweep::@99e62f37e0395d4f5540",
+					"jsonFile" : "target-SonarSweep-Debug-46329d93c0014794aa99.json",
+					"name" : "SonarSweep",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "SubmarineController::@b19d6cb418a7d4a09a6f",
+					"jsonFile" : "target-SubmarineController-Debug-7af19f807c38f35cbc60.json",
+					"name" : "SubmarineController",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "SubmarineControllerMark2::@b19d6cb418a7d4a09a6f",
+					"jsonFile" : "target-SubmarineControllerMark2-Debug-cae780fa8248e4bb536a.json",
+					"name" : "SubmarineControllerMark2",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/code/AoC2021/AdventOfCode2021/out/build/x64-Debug (default)",
+		"source" : "D:/code/AoC2021/AdventOfCode2021"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}

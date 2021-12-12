@@ -1,0 +1,7 @@
+# ninja log v5
+0	307	660976009	AdventOfCode2021/CMakeFiles/AdventOfCode2021.dir/AdventOfCode2021.cpp.obj	f6851f068f0a8bf3
+3	507	660976010	Day1/CMakeFiles/SonarSweep.dir/SonarSweep.cpp.obj	e01c667d773e62cc
+5	802	660976010	Day2/CMakeFiles/SubmarineController.dir/SubmarineController.cpp.obj	35469c988dd4bcb8
+307	1182	660976010	AdventOfCode2021/AdventOfCode2021.exe	c6e12623980e60f3
+507	1360	660976010	Day1/SonarSweep.exe	68447ddd4e273472
+802	1387	660976010	Day2/SubmarineController.exe	739b29b5c582da8f
