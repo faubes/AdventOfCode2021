@@ -1,3 +1,10 @@
+
+# Visual Studio 2019 cache/options directory
+.vs/
+
+# Add this line
+out/
+
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
