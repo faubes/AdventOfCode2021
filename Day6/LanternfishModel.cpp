@@ -4,7 +4,7 @@
 #include "LanternfishModel.h"
 
 #define DEBUG 0
-const int MAX_DAY = 256;
+const int MAX_DAY = 80;
 const int MEASUREMENT_DAY = 18;
 
 int Lanternfish::NEW_FISH_TIMER = 8;
@@ -32,9 +32,35 @@ void LanternfishModel::LoadInput()
 	input.close();
 }
 
+
+uint64_t static CalculateNumberAfter(const LanternfishState& initial, int days)
+{
+	int sum = 0;
+	for (Lanternfish lf : initial.data)
+	{
+	// simplify: suppose all fish have same timer
+		sum = std::pow(2, days/6);
+
+	}
+	return sum;
+}
+
+uint64_t static NewFishGrowth(const int& initialFish, int days)
+{
+	uint64_t sum = 0;
+	if (days < 8)
+	{
+		return 0;
+	}
+	if (days >= 8 && (days - 8) / 6 < 1 ) {
+		return 1;
+	}
+	return 1 + initialFish * std::pow(2, days / 6);
+}
+
 int main(int argc, const char** arv)
 {
-	LanternfishModel lfm = LanternfishModel("..\\Day6\\input.txt");
+	LanternfishModel lfm = LanternfishModel("..\\Day6\\test_input.txt");
 
 	/*Input test{};
 	std::cin >> test;
@@ -43,13 +69,16 @@ int main(int argc, const char** arv)
 	lfm.LoadInput();
 	int day = 0;
 	for (int day = 1; day <= MAX_DAY; day++) {
-		lfm.SimulateDay();
-		if (day == MEASUREMENT_DAY || day % 50 == 0)
+		//lfm.SimulateDay();
+
+		if (day % 2 == 0)
 		{
-			cout << lfm << endl;
+			cout << "Calculation: " << CalculateNumberAfter(lfm.GetState(), day) <<  endl;
+			cout << day << endl;
 		}
 	}
-
+	cout << lfm << endl;
+	
 
 	return 0;
 }

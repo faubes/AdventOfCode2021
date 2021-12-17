@@ -124,7 +124,7 @@ public:
 	void LoadInput();
 	LanternfishState GetState() const;
 	void SimulateDay();
-
+	//uint64_t CalculateNumberAfter(int days);
 	friend ostream& operator<<(ostream& os, const LanternfishModel& lfm)
 	{
 		return os << "Day " << lfm.day << " there are " << lfm.state.data.size() << " lanternfish";
