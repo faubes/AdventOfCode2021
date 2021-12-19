@@ -6,6 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 project ("AdventOfCode2021")
 
 set (CMAKE_CXX_STANDARD 20)
+
 # Include sub-projects.
 add_subdirectory ("AdventOfCode2021")
 
@@ -24,3 +25,6 @@ add_subdirectory ("Day6")
 add_subdirectory ("Day7")
 
 add_subdirectory ("Day8")
+
+add_subdirectory ("Day9")
+

@@ -16,7 +16,6 @@
 #include <ranges>
 #include <utility>
 
-
 using std::string;
 using std::cout;
 using std::endl;
@@ -72,11 +71,14 @@ public:
 	{
 		ifstream input(inputFilename);
 		int sum = 0;
+		int count = 0;
 		while (input >> *this)
 		{
-			sum += count();
+			count++;
+			sum += decode();
 		}
-		cout << "Sum is " << sum << endl;
+
+		cout << "Count is: " << count << " and sum is " << sum << endl;
 		input.close();
 
 	}
@@ -182,7 +184,7 @@ public:
 		unidentifiedSignals = TokenizeString(unique_signal_patterns);
 		digits = TokenizeString(four_digit_output_value);
 
-#ifdef DEBUG
+#if DEBUG
 		cout << "Extracted unidentified signals" << endl;
 		for (auto s : unidentifiedSignals)
 		{
@@ -204,6 +206,7 @@ public:
 		auto length7 = same_length{ 7 };
 		auto one_common_bit = common_bits{ 1 };
 		auto two_common_bits = common_bits{ 2 };
+		auto four_common_bits = common_bits{ 4 };
 
 		auto one = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length2 ); // should probably not crash if one = end()
 		signalMap[*one] = 1;
@@ -212,6 +215,7 @@ public:
 
 		auto four = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length4);
 		signalMap[*four] = 4;
+		string four_string = *four;
 		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *four));
 
 		auto seven = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length3);
@@ -222,13 +226,43 @@ public:
 		signalMap[*eight] = 8;
 		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *eight));
 
-		auto must_be_zero_if = [length6, two_common_bits, one_string](const string& str) { return length6(str) && two_common_bits(str, one_string); };
+		auto must_be_nine_if = [length6, four_common_bits, four_string](const string& str) { return length6(str) && four_common_bits(str, four_string); };
 
-		auto zero = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), must_be_zero_if);
+		auto nine = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), must_be_nine_if);
+		signalMap[*nine] = 9;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *nine));
+
+		auto must_be_six_if = [length6, one_common_bit, one_string](const string& str) { return length6(str) && one_common_bit(str, one_string); };
+
+		auto six = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), must_be_six_if);
+		signalMap[*six] = 6;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *six));
+
+		auto zero = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length6);
 		signalMap[*zero] = 0;
 		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *zero));
 
+		auto must_be_three_if = [length5, two_common_bits, one_string](const string& str) { return length5(str) && two_common_bits(str, one_string); };
+		
+		auto three = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), must_be_three_if);
+		signalMap[*three] = 3;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *three));
 
+		auto must_be_two_if = [length5, two_common_bits, four_string](const string& str) { return length5(str) && two_common_bits(str, four_string); };
+
+		auto two = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), must_be_two_if);
+		signalMap[*two] = 2;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *two));
+
+		if (unidentifiedSignals.size() == 1)
+		{
+			auto five = unidentifiedSignals.begin();
+			signalMap[*five] = 5;
+		}
+		else 
+		{
+			cout << "Something went wrong decoding signals!! There should only be 5 left." << endl;
+		}
 
 		return signalMap;
 	}
@@ -259,9 +293,30 @@ public:
 		return sum;
 	}
 
-	// decode the final 4 digit output value using signal patterns
-	void decode(string word) 
-	{}
+	// decode and sum the final 4 digit output value using signal patterns
+	int decode() 
+	{
+		decodedValue = IdentifySignalPatterns();
+
+		unordered_map<bs, int> decodedBitMap{};
+		for (auto& e : decodedValue)
+		{
+			decodedBitMap.insert(make_pair(StringToBitset(e.first), e.second));
+		}
+
+		int sum = 0;
+		for (int i =0; i< 4; i++)
+		{
+
+			// use conversion to Bitset to drop ordering of letters
+			bs asBitset = StringToBitset(digits[4-(i+1)]); 
+			// ie: cfbegad and fdgacbe are same up to permutation
+			// multiply by pow10 to get digits into right place
+			sum += decodedBitMap[asBitset] * pow(10, i);
+		}
+		cout << "decoded: " << sum << endl;
+		return sum;
+	}
 };
 
 

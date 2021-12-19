@@ -1,6 +1,6 @@
 ﻿// AdventOfCode2021.cpp : Defines the entry point for the application.
 //
-#define DEBUG 1
+#define DEBUG 0
 
 #include "SevenSegmentDisplay.h"
 
