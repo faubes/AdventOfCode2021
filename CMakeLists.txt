@@ -28,3 +28,4 @@ add_subdirectory ("Day8")
 
 add_subdirectory ("Day9")
 
+add_subdirectory ("Day10")
