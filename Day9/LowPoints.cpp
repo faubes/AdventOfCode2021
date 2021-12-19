@@ -12,6 +12,7 @@ int main(int argc, char** argv)
 	{
 		cout << mr << endl;
 		cout << "Risk is: " << mr.CalculateRiskSum(mr.FindLowPoints()) << endl;
+		cout << "Basin size is: " << mr.MultiplySizesOfBasins(mr.FindLowPoints()) << endl;
 	}
 
 	return 0;

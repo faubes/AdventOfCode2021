@@ -134,4 +134,112 @@ struct MapReader
 		return sum;
 	}
 
+	struct out_of_bounds
+	{
+		size_t rows;
+		size_t columns;
+		bool operator()(const std::pair<size_t, size_t> &p)
+		{
+			size_t i = p.first;
+			size_t j = p.second;
+			return (i < 0 || i >= rows) || (j < 0 || j >= columns );
+		}
+	};
+
+	enum direction { UP, DOWN, LEFT, RIGHT};
+
+	int RecursiveBasinSearch(const std::pair<size_t, size_t>& p, direction d, set <std::pair<size_t, size_t>> &explored)
+	{
+		int result = 0;
+
+		auto check = out_of_bounds{ array.size(), array[0].size() };
+		if (check(p))
+			return result;
+		if (explored.contains(p))
+		{
+			return result;
+		}
+		explored.insert(p);
+		size_t i = p.first;
+		size_t j = p.second;
+		
+		if (array[i][j] == 9) 
+		{
+			return 0;
+		}
+
+		result++;
+		switch (d)
+		{
+		case(LEFT):
+			result += RecursiveBasinSearch(std::make_pair(i - 1, j ), UP, explored);
+			result += RecursiveBasinSearch(std::make_pair(i + 1, j), DOWN, explored);
+			result += RecursiveBasinSearch(std::make_pair(i, j - 1), LEFT, explored);
+			break;
+		case(RIGHT):
+			result += RecursiveBasinSearch(std::make_pair(i - 1, j), UP, explored);
+			result += RecursiveBasinSearch(std::make_pair(i + 1, j), DOWN, explored);
+			result += RecursiveBasinSearch(std::make_pair(i, j + 1), RIGHT, explored);
+			break;
+		case(UP):
+			result += RecursiveBasinSearch(std::make_pair(i, j - 1), LEFT, explored);
+			result += RecursiveBasinSearch(std::make_pair(i, j + 1), RIGHT, explored);
+			result += RecursiveBasinSearch(std::make_pair(i - 1, j), UP, explored);
+			break;
+		case(DOWN):
+			result += RecursiveBasinSearch(std::make_pair(i, j - 1), LEFT, explored);
+			result += RecursiveBasinSearch(std::make_pair(i, j + 1), RIGHT, explored);
+			result += RecursiveBasinSearch(std::make_pair(i + 1, j), DOWN, explored);
+			break;
+		}
+		return result;
+	}
+
+	int FindBasinFromLowPoint(const std::pair<size_t, size_t>& p)
+	{
+		int result = 0;
+		auto check = out_of_bounds{ array.size(), array[0].size() };
+		if (check(p))
+			return result;
+		size_t i = p.first;
+		size_t j = p.second;
+
+		if (array[i][j] == 9)
+		{
+			return 0;
+		}
+		result++;
+		set <std::pair<size_t, size_t>> explored{p};
+		result += RecursiveBasinSearch(std::make_pair(i, j - 1), LEFT, explored);
+		result += RecursiveBasinSearch(std::make_pair(i, j + 1), RIGHT, explored);
+		result += RecursiveBasinSearch(std::make_pair(i - 1, j), UP, explored);
+		result += RecursiveBasinSearch(std::make_pair(i + 1, j), DOWN, explored);
+		return result;
+
+	}
+
+	int MultiplySizesOfBasins(const vector<std::pair<size_t, size_t>> &lowPoints) 
+	{
+		vector<int> MaxThree{};
+		for (auto p : lowPoints)
+		{
+			int next = FindBasinFromLowPoint(p);
+			auto it = std::min_element(MaxThree.begin(), MaxThree.end());
+			if (MaxThree.size() < 3)
+			{
+				MaxThree.emplace_back(next);
+			}
+			else if (*it < next)
+			{
+				*it = next;
+			}
+		}
+		int result = 1;
+		for (auto i : MaxThree)
+		{
+			result *= i;
+		}
+
+		return result;
+	}
 };
