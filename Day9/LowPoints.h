@@ -71,9 +71,9 @@ struct MapReader
 				}
 				return false;
 			}
-			if (index == v.size()) // last elem
+			if (index == v.size() - 1) // last elem
 			{
-				if (v[index] < v[v.size() - 1])
+				if (v[index] < v[index - 1])
 				{
 					return true;
 				}
@@ -84,32 +84,54 @@ struct MapReader
 
 	};
 
-	void FindLowPoints()
+	vector<std::pair<size_t, size_t>> FindLowPoints()
 	{
+		vector<std::pair<size_t, size_t>> lowPoints{};
+
 		if (array.empty())
 		{
 			cout << "array empty?" << endl;
-			return;
+			return lowPoints;
 		}
 		size_t rownum = array.size();
 		size_t colnum = array[0].size();
 		
-		for (size_t j = 0; j < colnum; j++)
-		{
-			auto testfunc = is_local_min{};
-			if (testfunc(array[0], j))
+		for (size_t i = 0; i < rownum; i++) {
+
+			for (size_t j = 0; j < colnum; j++)
 			{
-				cout << "Found local 1-d min in row " << "0" << " column " << j << endl;
-				auto row = GetColumn(j);
-				if (testfunc(row, j))
+				auto testfunc = is_local_min{};
+				if (testfunc(array[i], j))
 				{
-					cout << "Found local 1-d min in column " << j << endl;
+					//cout << "Found local 1-d min in row " << "0" << " column " << j << endl;
+					auto row = GetColumn(j);
+					if (testfunc(row, i))
+					{
+						cout << "Found low point in row " << i << " column " << j << endl;
+						lowPoints.push_back(std::make_pair(i, j));
+					}
 				}
 			}
+
+
+		}
+		return lowPoints;
+	}
+
+	int CalculateRiskSum(vector<std::pair<size_t, size_t>> points)
+	{
+		if (array.empty())
+		{
+			cout << "array empty?" << endl;
+			return 0;
 		}
 
-
-
+		int sum = 0;
+		for (auto& p : points)
+		{
+			sum += array[p.first][p.second] + 1;
+		}
+		return sum;
 	}
 
 };
