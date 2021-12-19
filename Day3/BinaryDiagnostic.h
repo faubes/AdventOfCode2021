@@ -47,7 +47,7 @@ public:
 	void CalculateGammaAndDelta();
 	void CalculateOxygenAndCO2();
 
-	bitset<N> BinaryDiagnostic<N>::FilterByCriteria(vector<bitset<N>> data, std::function<bool(const int& A, const int& B)> comp);
+	bitset<N> FilterByCriteria(vector<bitset<N>> data, function<bool(const int& A, const int& B)> comp);
 
 	friend ostream& operator<<(ostream& os, const BinaryDiagnostic& bd) { 
 		

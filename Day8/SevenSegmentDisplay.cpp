@@ -41,9 +41,9 @@ int main(int argc, const char** arv)
 	//cout << endl;
 
 	SignalPattern sp;
-	sp.LoadInput("..\\Day8\\example_input.txt");
+	sp.LoadInput("..\\Day8\\input.txt");
 	//sp.ParseInput();
-	sp.IdentifySignalPatterns();
+	//auto map = sp.IdentifySignalPatterns();
 
 	return 0;
 }

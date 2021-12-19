@@ -37,7 +37,7 @@ static int OptimalFuelMedian(vector<int> data)
 
 static int CostOfMove(vector<int> data, int movePos)
 {
-	return std::accumulate(data.begin(), data.end(), 0, [movePos](int& acc, int& next ) {return acc + std::abs(next - movePos); });
+	return std::accumulate(data.begin(), data.end(), 0, [movePos](int acc, int& next ) {return acc + std::abs(next - movePos); });
 }
 
 
@@ -49,7 +49,7 @@ static int CostofMoveLinear(vector<int> data, int movePos)
 	// the cost of a burn of length L = sum_i=1^l i = i*(i-1)/2
 	//
 	return std::accumulate(data.begin(), data.end(), 0,
-		[movePos](int& acc, int &next) { 
+		[movePos](int acc, int &next) { 
 			//cost of burn
 			int length = std::abs(next - movePos);
 			return acc + length*(length+1)/2; }

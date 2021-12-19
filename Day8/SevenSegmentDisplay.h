@@ -2,7 +2,6 @@
 // or project specific include files.
 
 #pragma once
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -14,6 +13,8 @@
 #include <set>
 #include <unordered_map>
 #include <sstream>
+#include <ranges>
+#include <utility>
 
 
 using std::string;
@@ -38,7 +39,8 @@ typedef bitset<7> bs;
 class SignalPattern
 {
 
-	enum class Wires {
+	enum Wires 
+	{
 		a, b, c, d, e, f, g
 	}; 
 	
@@ -46,13 +48,13 @@ class SignalPattern
 	string unique_signal_patterns{};
 	string four_digit_output_value{};
 	
-	unordered_map<bs, bs> wireDecoded;
-	unordered_map<bs, int> decodedValue;
+	unordered_map<string, int> decodedValue;
+	vector<string> unidentifiedSignals;
+	vector<string> digits;
 
-	// for each letter we'll need a set of candidates
-	unordered_map<bs, vector<bs>> candidates;
 
 public:
+
 	friend istream& operator>>(istream& is, SignalPattern &sp)
 	{
 		string str;
@@ -65,16 +67,20 @@ public:
 		}
 		return is;
 	}
+
 	void LoadInput(string inputFilename)
 	{
 		ifstream input(inputFilename);
-		if (!(input >> *this))
+		int sum = 0;
+		while (input >> *this)
 		{
-			cout << "couldn't read data!" << endl;
+			sum += count();
 		}
+		cout << "Sum is " << sum << endl;
 		input.close();
 
 	}
+
 	void ParseInput() 
 	{
 		if (input_string.empty())
@@ -92,6 +98,7 @@ public:
 		cout << four_digit_output_value << endl;
 #endif
 	}
+
 	vector<string> TokenizeString(string str)
 	{
 		vector<string> tokens{};
@@ -103,18 +110,37 @@ public:
 		}
 		return tokens;
 	}
-	bs StringToBitset(string str) {
+
+	static bs StringToBitset(string str) {
 		bs sum{};
 		for (auto c : str) 
 		{
-			cout << static_cast<int>(Wires(c)) << endl;
-			bs next = bs(static_cast<int>(Wires(c)));
+			bs next = WireToBitset(Wires(c - 'a'));
 			sum.operator|=(next);
 		}
-		cout << sum << endl;
 		return sum;
 	}
-	string BitsetToString(bs b)
+
+	static bs WireToBitset(Wires w) {
+		bs result{};
+		result[static_cast<int>(w)] = true; // flip the w'th bit
+		return result;
+	}
+
+	static string BitsetToWire(bs b)
+	{
+		stringstream ss;
+		for (int i = 0; i < b.size(); i++)
+		{
+			if (b[i])
+			{
+				ss << Wires(i);
+			}
+		}
+		return ss.str();
+	}
+
+	static string BitsetToBinaryString(bs b)
 	{
 		stringstream ss;
 		for (int i=0; i < b.size(); i++)
@@ -126,7 +152,23 @@ public:
 		}
 		return ss.str();
 	}
-	
+
+	struct same_length {
+		int n;
+		bool operator()(const string& str) const { return str.length() == n; }
+	};
+
+	struct common_bits {
+		int num_common_bits;
+		bool operator()(const string& str1, const string& str2) const
+		{
+			bs bs1 = StringToBitset(str1);
+			bs bs2 = StringToBitset(str2);
+			bs common_bits = bs1 & bs2;
+			return common_bits.count() == num_common_bits;
+		}
+	};
+
 	unordered_map<string, int> IdentifySignalPatterns() 
 	{
 		unordered_map<string, int> signalMap{};
@@ -137,8 +179,8 @@ public:
 			return signalMap;
 		}
 
-		vector<string> unidentifiedSignals = TokenizeString(unique_signal_patterns);
-		vector<string> digits = TokenizeString(four_digit_output_value);
+		unidentifiedSignals = TokenizeString(unique_signal_patterns);
+		digits = TokenizeString(four_digit_output_value);
 
 #ifdef DEBUG
 		cout << "Extracted unidentified signals" << endl;
@@ -154,19 +196,72 @@ public:
 		}
 #endif
 
-		vector<bs> all_possible(7);
-		std::iota(all_possible.begin(), all_possible.end(), 0);
+		auto length2 = same_length{ 2 };
+		auto length3 = same_length{ 3 };
+		auto length4 = same_length{ 4 };
+		auto length5 = same_length{ 5 };
+		auto length6 = same_length{ 6 };
+		auto length7 = same_length{ 7 };
+		auto one_common_bit = common_bits{ 1 };
+		auto two_common_bits = common_bits{ 2 };
 
-		for (string signal : unidentifiedSignals) 
-		{
-			candidates[StringToBitset(signal)] = all_possible;
- 		}
+		auto one = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length2 ); // should probably not crash if one = end()
+		signalMap[*one] = 1;
+		string one_string = *one;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *one));
+
+		auto four = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length4);
+		signalMap[*four] = 4;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *four));
+
+		auto seven = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length3);
+		signalMap[*seven] = 7;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *seven));
+
+		auto eight = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), length7);
+		signalMap[*eight] = 8;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *eight));
+
+		auto must_be_zero_if = [length6, two_common_bits, one_string](const string& str) { return length6(str) && two_common_bits(str, one_string); };
+
+		auto zero = find_if(unidentifiedSignals.begin(), unidentifiedSignals.end(), must_be_zero_if);
+		signalMap[*zero] = 0;
+		unidentifiedSignals.erase(std::remove(unidentifiedSignals.begin(), unidentifiedSignals.end(), *zero));
+
+
+
 		return signalMap;
 	}
 
+	// count number of 1,4,7,8 in digits
+	int count() {
+		decodedValue = IdentifySignalPatterns();
+
+		unordered_map<bs, int> decodedBitMap{};
+		for (auto& e : decodedValue)
+		{
+			decodedBitMap.insert(make_pair(StringToBitset(e.first), e.second)); 
+		}
+
+		int sum = 0;
+		for (auto& s : digits)
+		{
+			bs asBitset = StringToBitset(s); // use conversion to Bitset to disregard ordering of letters
+			// ie: cfbegad and fdgacbe are same up to permutation
+			if (decodedBitMap[asBitset] == 1 ||
+				decodedBitMap[asBitset] == 4 ||
+				decodedBitMap[asBitset] == 7 ||
+				decodedBitMap[asBitset] == 8)
+			{
+				sum++;
+			}
+		}
+		return sum;
+	}
 
 	// decode the final 4 digit output value using signal patterns
-	void decode(string word) {}
+	void decode(string word) 
+	{}
 };
 
 
@@ -177,16 +272,14 @@ private:
 	
 	int _n; // decimal value to display
 	std::bitset<7> _bitset; 
-	
-	//bool a, b, c, d, e, f, g;
 
 public:
 	static const unordered_map<int, std::bitset<7>> segmentMap;
 
 	static unordered_map<int, std::bitset<7>> create_map() {
 		unordered_map<int, std::bitset<7>> m;
-		m[0] = std::bitset<7>{ "1110111" };
-		m[1] = std::bitset<7>{ "0100100" };
+		m[0] = std::bitset<7>{"1110111"};
+		m[1] = std::bitset<7>{"0100100"};
 		m[2] = std::bitset<7>{"1011101"};
 		m[3] = std::bitset<7>{"1101101"};
 		m[4] = std::bitset<7>{"0101110"};
@@ -213,9 +306,6 @@ public:
 		return _bitset;
 	}
 	
-	//SevenSegmentDisplay(string str) : inputFilename(str) {}
-	//void LoadInput();
-
 	friend ostream& operator<<(ostream& os, SevenSegmentDisplay& ssd)
 	{
 		std::stringstream ss;

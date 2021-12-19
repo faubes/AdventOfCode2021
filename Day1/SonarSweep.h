@@ -44,7 +44,7 @@ class SonarSweepAverage : public SonarSweep {
 
 public:
 
-	SonarSweepAverage(string _inputFile) : SonarSweep(inputFile) {};
+	SonarSweepAverage(string _inputFile) : SonarSweep(_inputFile) {};
 	SonarSweepAverage(vector<int> _data) : SonarSweep(_data) {};
 
 	int countIncreasing() const ;

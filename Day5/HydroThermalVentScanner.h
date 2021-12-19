@@ -112,7 +112,7 @@ public:
 
 	void CalculateIntersections();
 
-	set<Position> HydroThermalVentScanner::GetIntersectionPoints();
+	set<Position> GetIntersectionPoints();
 
 	void PrintIntersectionMap();
 };
